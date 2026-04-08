@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZeroUI | Demo robusta</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+  <div class="bg-shape shape-3"></div>
+
+  <main class="app-shell">
+    <section class="hero-panel">
+      <span class="badge">Interacción Humano Computador • Demo interactiva</span>
+      <h1>Controla el sistema con <span class="gradient-text">voz y feedback visual - Grupo 5</span></h1>
+      <p class="subtitle">
+        Versión robusta con reconocimiento de voz, respaldo manual y control por gestos
+        para que la demo sea más completa y llamativa durante la exposición.
+      </p>
+
+      <div class="top-actions">
+        <button id="hablar" class="btn btn-primary" type="button" onclick="startListening()">Iniciar voz</button>
+        <button id="detener" class="btn btn-secondary" type="button" onclick="stopEverything()">Detener audio</button>
+        <button id="activarCamara" class="btn btn-primary" type="button" onclick="startCamera()">Activar cámara</button>
+        <button id="detenerCamara" class="btn btn-secondary" type="button" onclick="stopCamera()">Detener cámara</button>
+      </div>
+
+      <p id="compatibilidad" class="compat-msg">Presiona Iniciar voz y habla.</p>
+
+      <div class="manual-box">
+        <input id="manualInput" type="text" placeholder="Respaldo: escribe un comando aquí" />
+        <button id="manualBtn" type="button" class="btn btn-secondary small-btn" onclick="runManualCommand()">Probar comando</button>
+      </div>
+      <p id="suggestionText" class="suggestion-text">Sugerencias inteligentes: listas para ayudarte cuando un comando falle.</p>
+
+      <div class="main-grid">
+        <section class="left-column">
+          <div class="status-grid">
+            <article class="status-card">
+              <span class="status-label">Estado</span>
+              <span id="estado" class="status-value">Esperando interacción</span>
+            </article>
+
+            <article class="status-card">
+              <span class="status-label">Texto reconocido</span>
+              <span id="texto" class="status-value">---</span>
+            </article>
+
+            <article class="status-card">
+              <span class="status-label">Respuesta del sistema</span>
+              <span id="respuesta" class="status-value">---</span>
+            </article>
+
+            <article class="status-card metrics-card">
+              <span class="status-label">Métricas del sistema</span>
+              <div class="metrics-grid">
+                <div class="metric-box">
+                  <span class="metric-title">Errores</span>
+                  <span id="metricErrors" class="metric-value">0</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-title">Éxitos</span>
+                  <span id="metricSuccess" class="metric-value">0</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-title">Intentos</span>
+                  <span id="metricAttempts" class="metric-value">0</span>
+                </div>
+                <div class="metric-box">
+                  <span class="metric-title">Tiempo tarea</span>
+                  <span id="metricTime" class="metric-value">0.0 s</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <section class="commands-card">
+            <h2>Comandos disponibles</h2>
+            <p class="gesture-guide">También puedes mostrar esa cantidad de dedos frente a la cámara para ejecutar la misma función.</p>
+            <div class="command-list">
+              <span class="command-pill">1. Sí confirmo</span>
+              <span class="command-pill">2. No confirmo</span>
+              <span class="command-pill">3. Encender luz</span>
+              <span class="command-pill">4. Apagar luz</span>
+              <span class="command-pill">5. Abrir puerta</span>
+              <span class="command-pill">6. Cerrar puerta</span>
+              <span class="command-pill">7. Abrir persianas</span>
+              <span class="command-pill">8. Cerrar persianas</span>
+              <span class="command-pill">9. Estado</span>
+              <span class="command-pill">10. Cancelar</span>
+            </div>
+          </section>
+        </section>
+
+        <section class="right-column">
+          <section class="scene-card">
+            <div class="scene-header">
+              <h2>Simulación visual del entorno</h2>
+              <span id="actionBadge" class="action-badge">Sin acción reciente</span>
+            </div>
+
+            <div class="visual-stack">
+              <section class="camera-panel">
+                <div class="camera-panel-header">
+                  <h3>Cámara para gestos</h3>
+                  <span id="cameraStatus" class="camera-status">Cámara apagada</span>
+                </div>
+                <div class="camera-stage">
+                  <video id="cameraFeed" autoplay playsinline muted></video>
+                  <canvas id="gestureCanvas"></canvas>
+                  <div class="camera-overlay">
+                    <span id="gestureCountBadge" class="gesture-badge">0 dedos</span>
+                    <span id="gestureCommandBadge" class="gesture-badge secondary">Sin gesto detectado</span>
+                  </div>
+                </div>
+                <p class="camera-help">Muestra 1 a 10 dedos. Para 6 a 10 usa ambas manos.</p>
+              </section>
+
+              <div class="smart-room">
+                <div id="lightHalo" class="light-halo"></div>
+                <div id="doorSpark" class="door-spark"></div>
+
+                <div class="window-frame">
+                  <div class="window-glass">
+                    <div class="window-cross vertical"></div>
+                    <div class="window-cross horizontal"></div>
+                    <div id="blinds" class="blinds">
+                      <div class="blind-line"></div>
+                      <div class="blind-line"></div>
+                      <div class="blind-line"></div>
+                      <div class="blind-line"></div>
+                      <div class="blind-line"></div>
+                      <div class="blind-line"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="room-ceiling"></div>
+                <div class="light-cable"></div>
+
+                <div id="lamp" class="lamp">
+                  <div class="lamp-top"></div>
+                  <div class="lamp-bulb"></div>
+                  <div class="lamp-glow"></div>
+                </div>
+
+                <div class="floor-line"></div>
+
+                <div class="door-frame">
+                  <div id="door" class="door">
+                    <div class="door-panel"></div>
+                    <div class="door-knob"></div>
+                  </div>
+                </div>
+
+                <div id="confirmPanel" class="confirm-panel idle">
+                  <div class="confirm-icon">🗣️</div>
+                  <div class="confirm-text">
+                    <strong>Esperando comando</strong>
+                    <span>Di una instrucción para comenzar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
